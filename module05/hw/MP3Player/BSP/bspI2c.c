@@ -20,23 +20,24 @@ void I2C1_init(void){
 	
 	GPIO_InitTypeDef GPIO_InitStruct;
 	I2C_InitTypeDef I2C_InitStruct;
-	
+
+    // https://os.mbed.com/questions/71462/I2C-Stm32f4-can-not-read-the-data/
     // TODO: Fill in missing code to initialize the I2C1 interface.
     
-	// enable APB1 peripheral clock for I2C1
-	// <your code here>
+    // enable APB1 peripheral clock for I2C1
+    RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+
+    // enable clock for SCL and SDA pins
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
     
-	// enable clock for SCL and SDA pins
-	// <your code here>
-	
-	/* setup SCL and SDA pins
-	 * You can connect the I2C1 functions to two different
-	 * pins:
-	 * 1. SCL on PB6 or PB8  
-	 * 2. SDA on PB7 or PB9
-         *
-         * We will use SCL on PB8 and SDA on PB9 below
-	 */
+    /* setup SCL and SDA pins
+     * You can connect the I2C1 functions to two different
+     * pins:
+     * 1. SCL on PB6 or PB8  
+     * 2. SDA on PB7 or PB9
+     *
+     * We will use SCL on PB8 and SDA on PB9 below
+     */
     
     // Initialize GPIO_InitStruct (declared above) as follows
     // Set pins 8 and 9.
@@ -45,12 +46,36 @@ void I2C1_init(void){
     // Set OType to open drain (OD).
     // Set pull-up/pull-down to pull up.
     // Call GPIO_Init() to initialize GPIOB with GPIO_InitStruct
+        
+//    typedef struct
+//    {
+//      uint32_t GPIO_Pin;              /*!< Specifies the GPIO pins to be configured.
+//                                           This parameter can be any value of @ref GPIO_pins_define */
+//      GPIOMode_TypeDef GPIO_Mode;     /*!< Specifies the operating mode for the selected pins.
+//                                           This parameter can be a value of @ref GPIOMode_TypeDef */
+//      GPIOSpeed_TypeDef GPIO_Speed;   /*!< Specifies the speed for the selected pins.
+//                                           This parameter can be a value of @ref GPIOSpeed_TypeDef */
+//      GPIOOType_TypeDef GPIO_OType;   /*!< Specifies the operating output type for the selected pins.
+//                                           This parameter can be a value of @ref GPIOOType_TypeDef */
+//      GPIOPuPd_TypeDef GPIO_PuPd;     /*!< Specifies the operating Pull-up/Pull down for the selected pins.
+//                                           This parameter can be a value of @ref GPIOPuPd_TypeDef */
+//    }GPIO_InitTypeDef
+        
+//    void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct);
+        
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; //GPIO_Fast_Speed;
+    GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
+    GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
     
-    // <your code here for the above>
+    GPIO_Init(GPIOB,&GPIO_InitStruct);
     
 	// Connect I2C1 pins to AF:
     // Call GPIO_PinAFConfig once to set up pin 8 (SCL), once to set up pin 9 (SDA)
-    // <your code here
+    // void GPIO_PinAFConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_PinSource, uint8_t GPIO_AF);
+    GPIO_PinAFConfig(GPIOB,GPIO_PinSource8,GPIO_AF_I2C1);
+    GPIO_PinAFConfig(GPIOB,GPIO_PinSource9,GPIO_AF_I2C1);
     
 	// configure I2C1
     // Initialze I2C_InitStruct (declared above) as follows:
@@ -62,11 +87,35 @@ void I2C1_init(void){
     // set acknowledged address to 7 bits
     // Then call I2C_Init() to initialize I2C1 with I2C_InitStruct
     
-    // <Your code here for the above>
-	
-	// enable I2C1
+//    typedef struct
+//    {
+//      uint32_t I2C_ClockSpeed;          /*!< Specifies the clock frequency.
+//                                             This parameter must be set to a value lower than 400kHz */
+//      uint16_t I2C_Mode;                /*!< Specifies the I2C mode.
+//                                             This parameter can be a value of @ref I2C_mode */
+//      uint16_t I2C_DutyCycle;           /*!< Specifies the I2C fast mode duty cycle.
+//                                             This parameter can be a value of @ref I2C_duty_cycle_in_fast_mode */
+//      uint16_t I2C_OwnAddress1;         /*!< Specifies the first device own address.
+//                                             This parameter can be a 7-bit or 10-bit address. */
+//      uint16_t I2C_Ack;                 /*!< Enables or disables the acknowledgement.
+//                                             This parameter can be a value of @ref I2C_acknowledgement */
+//      uint16_t I2C_AcknowledgedAddress; /*!< Specifies if 7-bit or 10-bit address is acknowledged.
+//                                             This parameter can be a value of @ref I2C_acknowledged_address */
+//    }I2C_InitTypeDef;
+    
+    I2C_InitStruct.I2C_ClockSpeed = 100000;
+    I2C_InitStruct.I2C_Mode = I2C_Mode_I2C;
+    I2C_InitStruct.I2C_DutyCycle = I2C_DutyCycle_2;
+    I2C_InitStruct.I2C_OwnAddress1 = 0x0;
+    I2C_InitStruct.I2C_Ack = I2C_Ack_Disable;
+    I2C_InitStruct.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    
+    
+    // enable I2C1
     // Call I2C_Cmd() to enable I2C1
-	// <your code here>
+    // void I2C_Cmd(I2C_TypeDef* I2Cx, FunctionalState NewState);
+    I2C_Cmd(I2C1,ENABLE);
+    
 }
 
 /* This function issues a start condition and 
