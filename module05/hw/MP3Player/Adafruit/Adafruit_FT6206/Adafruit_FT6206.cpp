@@ -31,6 +31,7 @@ void delay(uint32_t);
 /**************************************************************************/
 // I2C, no address adjustments or pins
 Adafruit_FT6206::Adafruit_FT6206() {
+    hI2C = 0;
 }
 
 
@@ -63,6 +64,13 @@ boolean Adafruit_FT6206::begin(uint8_t threshhold) {
   */
   return true;
 }
+
+
+// TODO: (DONE) Initialize Handle
+void Adafruit_FT6206::setPjdfHandle(HANDLE hI2C) {
+    this->hI2C = hI2C;
+}
+
 
 // DONT DO THIS - REALLY - IT DOESNT WORK
 void Adafruit_FT6206::autoCalibrate(void) {
@@ -99,7 +107,7 @@ boolean Adafruit_FT6206::touched(void) {
 }
 
 /*****************************/
-
+// TODO: Update Adafruit_FT6206::readData to ReadI2C (pjdf)
 void Adafruit_FT6206::readData(uint16_t *x, uint16_t *y) {
 
   uint8_t i2cdat[16];
@@ -175,7 +183,7 @@ TS_Point Adafruit_FT6206::getPoint(void) {
   return TS_Point(x, y, 1);
 }
 
-
+// TODO: Update Adafruit_FT6206::readRegister8 to ReadI2C (pjdf)
 uint8_t Adafruit_FT6206::readRegister8(uint8_t reg) {
   uint8_t x ;
    // use i2c
@@ -192,6 +200,7 @@ uint8_t Adafruit_FT6206::readRegister8(uint8_t reg) {
   return x;
 }
 
+// TODO: Update Adafruit_FT6206::writeRegister8 to WriteI2C (pjdf)
 void Adafruit_FT6206::writeRegister8(uint8_t reg, uint8_t val) {
    // use i2c
     I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter);

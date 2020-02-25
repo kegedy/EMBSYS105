@@ -17,6 +17,7 @@
 #ifndef ADAFRUIT_FT6206_LIBRARY
 #define ADAFRUIT_FT6206_LIBRARY
 
+#include <pjdf.h>
 #include <stdint.h>
 
 #ifndef boolean
@@ -69,11 +70,14 @@ class Adafruit_FT6206 {
 
   boolean touched(void);
   TS_Point getPoint(void);
+  //TODO: (DONE)
+  void setPjdfHandle(HANDLE);
 
  private:
   uint8_t touches;
   uint16_t touchX[2], touchY[2], touchID[2];
-
+  //TODO: (DONE) Create Handle to I2C Driver
+  HANDLE hI2C;
 };
 
 #endif //ADAFRUIT_FT6206_LIBRARY

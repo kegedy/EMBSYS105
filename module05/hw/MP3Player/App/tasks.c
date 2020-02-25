@@ -171,9 +171,9 @@ void LcdTouchDemoTask(void* pdata)
     while (1) { 
         boolean touched = false;
         
-        // TODO: Poll for a touch on the touch panel
-        // <Your code here>
-        // <hint: Call a function provided by touchCtrl
+        // TODO: (DONE) Poll for a touch on the touch panel
+        // class Adafruit_FT6206
+        touched = touchCtrl.touched();       
         
         if (! touched) {
             OSTimeDly(5);
@@ -182,8 +182,8 @@ void LcdTouchDemoTask(void* pdata)
         
         TS_Point rawPoint;
        
-        // TODO: Retrieve a point  
-        // <Your code here>
+        // TODO: (DONE) Retrieve a point  
+        rawPoint = touchCtrl.getPoint();
 
         if (rawPoint.x == 0 && rawPoint.y == 0)
         {

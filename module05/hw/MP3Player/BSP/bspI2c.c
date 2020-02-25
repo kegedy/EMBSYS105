@@ -21,8 +21,8 @@ void I2C1_init(void){
 	GPIO_InitTypeDef GPIO_InitStruct;
 	I2C_InitTypeDef I2C_InitStruct;
 
-    // https://os.mbed.com/questions/71462/I2C-Stm32f4-can-not-read-the-data/
-    // TODO: Fill in missing code to initialize the I2C1 interface.
+    // https://github.com/abtom87/GPS-Tracking-STM32F4/blob/master/src/i2c1_comm.c
+    // TODO: (DONE) Fill in missing code to initialize the I2C1 interface.
     
     // enable APB1 peripheral clock for I2C1
     RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
@@ -109,6 +109,8 @@ void I2C1_init(void){
     I2C_InitStruct.I2C_OwnAddress1 = 0x0;
     I2C_InitStruct.I2C_Ack = I2C_Ack_Disable;
     I2C_InitStruct.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    
+    I2C_Init(I2C1,&I2C_InitStruct);
     
     
     // enable I2C1

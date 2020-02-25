@@ -15,6 +15,8 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_i2c.h"
 
+#define PJDF_I2C1 I2C1 // Address of I2C1 memory mapped register block
+
 void I2C1_init(void);
 uint8_t I2C_read_ack(I2C_TypeDef* I2Cx);
 uint8_t I2C_read_nack(I2C_TypeDef* I2Cx);
