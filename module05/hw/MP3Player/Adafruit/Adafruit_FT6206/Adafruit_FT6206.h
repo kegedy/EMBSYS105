@@ -17,8 +17,8 @@
 #ifndef ADAFRUIT_FT6206_LIBRARY
 #define ADAFRUIT_FT6206_LIBRARY
 
-#include <pjdf.h>
 #include <stdint.h>
+#include <pjdf.h>
 
 #ifndef boolean
     #define boolean bool
@@ -40,6 +40,7 @@
 #define FT6206_REG_POINTRATE 0x88
 #define FT6206_REG_FIRMVERS 0xA6
 #define FT6206_REG_CHIPID 0xA3
+#define FT6206_REG_G_MODE 0xA4
 #define FT6206_REG_VENDID 0xA8
 
 // calibrated for Adafruit 2.8" ctp screen
@@ -60,6 +61,7 @@ class Adafruit_FT6206 {
  public:
 
   Adafruit_FT6206(void);
+  void setPjdfHandle(HANDLE hI2C);
   boolean begin(uint8_t thresh = FT6206_DEFAULT_THRESSHOLD);  
 
   void writeRegister8(uint8_t reg, uint8_t val);
@@ -70,14 +72,12 @@ class Adafruit_FT6206 {
 
   boolean touched(void);
   TS_Point getPoint(void);
-  //TODO: (DONE)
-  void setPjdfHandle(HANDLE);
 
  private:
+  HANDLE hI2C;
   uint8_t touches;
   uint16_t touchX[2], touchY[2], touchID[2];
-  //TODO: (DONE) Create Handle to I2C Driver
-  HANDLE hI2C;
+
 };
 
 #endif //ADAFRUIT_FT6206_LIBRARY

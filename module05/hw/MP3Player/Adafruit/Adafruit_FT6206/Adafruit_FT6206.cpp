@@ -24,6 +24,11 @@
 
 void delay(uint32_t);
 
+
+void Adafruit_FT6206::setPjdfHandle(HANDLE hI2C) {
+    this->hI2C = hI2C;
+}
+
 /**************************************************************************/
 /*! 
     @brief  Instantiates a new FT6206 class
@@ -31,7 +36,6 @@ void delay(uint32_t);
 /**************************************************************************/
 // I2C, no address adjustments or pins
 Adafruit_FT6206::Adafruit_FT6206() {
-    hI2C = 0;
 }
 
 
@@ -45,6 +49,7 @@ boolean Adafruit_FT6206::begin(uint8_t threshhold) {
 
   // change threshhold to be higher/lower
   writeRegister8(FT6206_REG_THRESHHOLD, threshhold);
+  writeRegister8(FT6206_REG_G_MODE, 1); // Set interrupt mode
   
   if ((readRegister8(FT6206_REG_VENDID) != 17) || (readRegister8(FT6206_REG_CHIPID) != 6)) 
     return false;
@@ -64,13 +69,6 @@ boolean Adafruit_FT6206::begin(uint8_t threshhold) {
   */
   return true;
 }
-
-
-// TODO: (DONE) Initialize Handle
-void Adafruit_FT6206::setPjdfHandle(HANDLE hI2C) {
-    this->hI2C = hI2C;
-}
-
 
 // DONT DO THIS - REALLY - IT DOESNT WORK
 void Adafruit_FT6206::autoCalibrate(void) {
@@ -107,21 +105,25 @@ boolean Adafruit_FT6206::touched(void) {
 }
 
 /*****************************/
-// TODO: Update Adafruit_FT6206::readData to ReadI2C (pjdf)
+
 void Adafruit_FT6206::readData(uint16_t *x, uint16_t *y) {
 
   uint8_t i2cdat[16];
-  I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter);
-  I2C_write(I2C1, (uint8_t)0);  
-  I2C_stop(I2C1);
-  I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Receiver);
-  //Wire.requestFrom((uint8_t)FT6206_ADDR, (uint8_t)32);
-  
-  uint8_t i;
-  for (i=0; i<15; i++)
-    i2cdat[i] = I2C_read_ack(I2C1);
-  i2cdat[i] = I2C_read_nack(I2C1);
+//  I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter);
+//  I2C_write(I2C1, (uint8_t)0);  
+//  I2C_stop(I2C1);
+//  I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Receiver);
+//  //Wire.requestFrom((uint8_t)FT6206_ADDR, (uint8_t)32);
+//  
+//  uint8_t i;
+//  for (i=0; i<14; i++)
+//    i2cdat[i] = I2C_read_ack(I2C1);
+//  i2cdat[i] = I2C_read_nack(I2C1);
 
+  uint32_t count = 16;
+  i2cdat[0] = 0;
+  Read(hI2C, i2cdat, &count);
+  
   /*
   for (int16_t i=0; i<0x20; i++) {
     Serial.print("I2C $"); Serial.print(i, HEX); Serial.print(" = 0x"); Serial.println(i2cdat[i], HEX);
@@ -183,30 +185,36 @@ TS_Point Adafruit_FT6206::getPoint(void) {
   return TS_Point(x, y, 1);
 }
 
-// TODO: Update Adafruit_FT6206::readRegister8 to ReadI2C (pjdf)
+
 uint8_t Adafruit_FT6206::readRegister8(uint8_t reg) {
-  uint8_t x ;
-   // use i2c
-    I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter); 
-    I2C_write(I2C1, (uint8_t)reg);
-    I2C_stop(I2C1);
-    I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Receiver);
-    // Wire.requestFrom((uint8_t)FT6206_ADDR, (uint8_t)1);
-    x = I2C_read_nack(I2C1);
+//  uint8_t x ;
+//   // use i2c
+//    I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter); 
+//    I2C_write(I2C1, (uint8_t)reg);
+//    I2C_stop(I2C1);
+//    I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Receiver);
+//    // Wire.requestFrom((uint8_t)FT6206_ADDR, (uint8_t)1);
+//    x = I2C_read_nack(I2C1);
 
   //  Serial.print("$"); Serial.print(reg, HEX); 
   //  Serial.print(": 0x"); Serial.println(x, HEX);
+    uint32_t count = 1;
+    Read(hI2C, &reg, &count);
   
-  return x;
+  return reg;
 }
 
-// TODO: Update Adafruit_FT6206::writeRegister8 to WriteI2C (pjdf)
 void Adafruit_FT6206::writeRegister8(uint8_t reg, uint8_t val) {
    // use i2c
-    I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter);
-    I2C_write(I2C1, (uint8_t)reg);
-    I2C_write(I2C1, (uint8_t)val);
-    I2C_stop(I2C1);
+//    I2C_start(I2C1, FT6206_ADDR<<1, I2C_Direction_Transmitter);
+//    I2C_write(I2C1, (uint8_t)reg);
+//    I2C_write(I2C1, (uint8_t)val);
+//    I2C_stop(I2C1);
+    uint8_t buf[2];
+    buf[0] = reg;
+    buf[1] = val;
+    uint32_t count = 1;
+    Write(hI2C, buf, &count);
 }
 
 /****************/
