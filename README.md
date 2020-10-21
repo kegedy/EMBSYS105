@@ -1,5 +1,7 @@
 ### Programming with Embedded & Real-Time Operating Systems
 
+[![MP3 Player with SMT32F401](http://img.youtube.com/vi/FNxsA_DG_Zk/0.jpg)](http://www.youtube.com/watch?v=FNxsA_DG_Zk "MP3 Player with SMT32F401")
+
 #### Week 1
 
 - Embedded Operating System Concepts Part 1 (Labrosse Chap 2: Real-Time Systems Concepts)
